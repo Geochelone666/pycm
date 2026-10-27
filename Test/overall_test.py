@@ -1287,6 +1287,11 @@ Y(Youden index)                                                  0.73333        
 dInd(Distance index)                                             0.26667                 0.67586                 0.54716
 sInd(Similarity index)                                           0.81144                 0.52209                 0.6131
 <BLANKLINE>
+>>> cm_zero = ConfusionMatrix([0, 1, 1], [0, 1, 0], sample_weight=[0, 1, 0])
+>>> cm_zero.table[1][1]
+1
+>>> cm_zero.table[1][0]
+0
 >>> cm2 = ConfusionMatrix(y_actu, y_pred, sample_weight=np.array(weight))
 >>> isinstance(cm2.weights, np.ndarray)
 True

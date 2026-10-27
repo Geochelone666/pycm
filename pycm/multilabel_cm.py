@@ -4,6 +4,7 @@ from __future__ import division
 from typing import List, Set, Any, Union, Optional
 from .errors import pycmVectorError, pycmMultiLabelError
 from .params import *
+from .utils import sample_weight_validate
 from .cm import ConfusionMatrix
 import numpy
 
@@ -80,14 +81,19 @@ class MultiLabelCM():
         Return confusion matrices based on samples.
 
         :param index: sample index for confusion matrix
+
+        Each label observation uses the weight of the selected sample.
         """
         if index < 0 or index >= len(self.actual_vector):
             raise pycmMultiLabelError(VECTOR_INDEX_ERROR)
         if index not in self.samplewise_cms:
+            weights = self.weights
+            if weights is not None and len(weights) == len(self.actual_vector):
+                weights = numpy.repeat(weights[index], len(self.classes)).tolist()
             cm = ConfusionMatrix(
                 self.actual_vector_multihot[index],
                 self.predict_vector_multihot[index],
-                sample_weight=self.weights)
+                sample_weight=weights)
             self.samplewise_cms[index] = cm
             return cm
         return self.samplewise_cms[index]
@@ -134,6 +140,9 @@ def __mlcm_vector_handler__(
     if classes is not None and len(set(classes)) != len(classes):
         raise pycmVectorError(VECTOR_UNIQUE_CLASS_ERROR)
     if isinstance(sample_weight, (list, numpy.ndarray)):
+        if len(sample_weight) != len(actual_vector):
+            raise pycmVectorError(WEIGHT_SIZE_ERROR)
+        sample_weight_validate(sample_weight)
         mlcm.weights = sample_weight
 
 

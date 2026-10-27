@@ -322,4 +322,44 @@ pycm.errors.pycmVectorError: Input vectors must not be empty.
 Traceback (most recent call last):
         ...
 pycm.errors.pycmVectorError: `classes` must contain unique labels with no duplicates.
+>>> cm = ConfusionMatrix([0, 1, 1], [0, 1, 0], sample_weight=[1, 2])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must have the same length as the input vectors.
+>>> mlcm = MultiLabelCM([{1}, {2}, {1, 2}], [{1}, {1}, {2}], sample_weight=[1, 2])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must have the same length as the input vectors.
+>>> cm = ConfusionMatrix([0, 1, 1], [0, 1, 0], sample_weight=[1, -2, 1])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must contain only non-negative finite numbers.
+>>> cm = ConfusionMatrix([0, 1, 1], [0, 1, 0], sample_weight=[1, float('nan'), 1])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must contain only non-negative finite numbers.
+>>> cm = ConfusionMatrix([0, 1, 1], [0, 1, 0], sample_weight=[1, float('inf'), 1])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must contain only non-negative finite numbers.
+>>> cm = ConfusionMatrix([0, 1, 1], [0, 1, 0], sample_weight=[1, 'a', 1])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must contain only non-negative finite numbers.
+>>> cm = ConfusionMatrix([0, 1, 1], [0, 1, 0], sample_weight=[1, None, 1])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must contain only non-negative finite numbers.
+>>> mlcm = MultiLabelCM([{1}, {2}, {1, 2}], [{1}, {1}, {2}], sample_weight=[1, -2, 1])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must contain only non-negative finite numbers.
+>>> mlcm = MultiLabelCM([{1}, {2}, {1, 2}], [{1}, {1}, {2}], sample_weight=[1, float('nan'), 1])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: The sample weight vector must contain only non-negative finite numbers.
+>>> cm = ConfusionMatrix(matrix={0: {0: 1, 1: 0}, 1: {0: 0, 1: 1}}, sample_weight=[1, 2, 3])
+Traceback (most recent call last):
+        ...
+pycm.errors.pycmVectorError: Sample weights can only be used together with the input vectors, not with a matrix or a file.
 """

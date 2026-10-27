@@ -83,6 +83,10 @@ class ConfusionMatrix():
             self.transpose = transpose
         else:
             self.transpose = False
+        if sample_weight is not None and (
+                isfile(file) or isinstance(
+                    matrix, (dict, list, numpy.ndarray))):
+            raise pycmVectorError(WEIGHT_MODE_ERROR)
         if isfile(file):
             matrix_param = __obj_file_handler__(self, file)
         elif isinstance(matrix, dict):
