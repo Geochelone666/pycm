@@ -4,6 +4,7 @@ from __future__ import division
 from typing import List, Set, Any, Union, Optional
 from .errors import pycmVectorError, pycmMultiLabelError
 from .params import *
+from .utils import sample_weight_validate
 from .cm import ConfusionMatrix
 import numpy
 
@@ -134,6 +135,9 @@ def __mlcm_vector_handler__(
     if classes is not None and len(set(classes)) != len(classes):
         raise pycmVectorError(VECTOR_UNIQUE_CLASS_ERROR)
     if isinstance(sample_weight, (list, numpy.ndarray)):
+        if len(sample_weight) != len(actual_vector):
+            raise pycmVectorError(WEIGHT_SIZE_ERROR)
+        sample_weight_validate(sample_weight)
         mlcm.weights = sample_weight
 
 

@@ -8,7 +8,7 @@ import math
 import numpy
 import re
 from .params import *
-from .errors import pycmMatrixError
+from .errors import pycmMatrixError, pycmVectorError
 from warnings import warn
 from functools import wraps
 
@@ -291,6 +291,26 @@ def matrix_params_from_table(table: Dict[Any,
         FP_dict = temp
         table_temp = transpose_func(classes, table)
     return classes, table_temp, TP_dict, TN_dict, FP_dict, FN_dict
+
+
+def sample_weight_validate(
+        sample_weight: Optional[Union[List[Any], numpy.ndarray]]) -> None:
+    """
+    Validate sample weight values.
+
+    :param sample_weight: sample weights list
+    """
+    if not isinstance(sample_weight, (list, numpy.ndarray)):
+        return
+    for weight in sample_weight:
+        if isinstance(weight, (str, bytes)):
+            raise pycmVectorError(WEIGHT_VALUE_ERROR)
+        try:
+            value = float(weight)
+        except (TypeError, ValueError):
+            raise pycmVectorError(WEIGHT_VALUE_ERROR)
+        if not math.isfinite(value) or value < 0:
+            raise pycmVectorError(WEIGHT_VALUE_ERROR)
 
 
 def matrix_params_calc(

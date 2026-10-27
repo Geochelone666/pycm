@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- A `sample_weight` whose length differs from the input vectors now raises `pycmVectorError` in `ConfusionMatrix` and `MultiLabelCM` instead of being silently ignored
+- A `sample_weight` containing negative, non-finite or non-numeric values now raises `pycmVectorError` in `ConfusionMatrix` and `MultiLabelCM` instead of silently corrupting results
+- A `sample_weight` passed together with `matrix` or `file` now raises `pycmVectorError` instead of being silently ignored
 ## [4.6] - 2026-03-09
 ### Added
 - `PCurve` class
