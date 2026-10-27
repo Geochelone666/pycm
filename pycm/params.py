@@ -84,6 +84,7 @@ PLOT_COLORS_CLASS_MISMATCH_ERROR = "The number of colors does not match the numb
 PLOT_MARKERS_CLASS_MISMATCH_ERROR = "The number of markers does not match the number of classes."
 VECTOR_TYPE_ERROR = "Input vectors must be provided as a list or a NumPy array."
 VECTOR_SIZE_ERROR = "Input vectors must have the same length."
+WEIGHT_SIZE_ERROR = "The sample weight vector must have the same length as the input vectors."
 VECTOR_EMPTY_ERROR = "Input vectors must not be empty."
 VECTOR_ONLY_ERROR = "This option is only available in vector mode."
 VECTOR_UNIQUE_CLASS_ERROR = "`classes` must contain unique labels with no duplicates."
