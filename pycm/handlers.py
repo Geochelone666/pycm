@@ -239,6 +239,7 @@ def __obj_vector_handler__(
     if isinstance(sample_weight, (list, numpy.ndarray)) and len(
             sample_weight) != len(actual_vector):
         raise pycmVectorError(WEIGHT_SIZE_ERROR)
+    sample_weight_validate(sample_weight)
     matrix_param = matrix_params_calc(
         actual_vector, predict_vector, sample_weight, classes)
     if isinstance(sample_weight, (list, numpy.ndarray)):
