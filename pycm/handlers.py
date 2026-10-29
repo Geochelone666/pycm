@@ -120,13 +120,17 @@ def __obj_file_handler__(cm: "pycm.ConfusionMatrix", file: IO) -> Tuple[List[Any
     :param file: saved confusion matrix file object
     """
     obj_data = json.load(file)
+    # The saved matrix stores the complete class domain in display order,
+    # including explicitly declared classes absent from the observations.
+    saved_matrix = obj_data.get("Matrix")
+    saved_classes = list(dict(saved_matrix)) if saved_matrix is not None else None
     if obj_data["Actual-Vector"] is not None and obj_data[
             "Predict-Vector"] is not None:
         loaded_weights = obj_data.get("Sample-Weight", None)
         # Saved vectors must not bypass constructor length/value validation.
         matrix_param = __obj_vector_handler__(
             cm, obj_data["Actual-Vector"], obj_data["Predict-Vector"],
-            None, loaded_weights, None)
+            None, loaded_weights, saved_classes)
         cm.actual_vector = obj_data["Actual-Vector"]
         cm.predict_vector = obj_data["Predict-Vector"]
         cm.prob_vector = obj_data.get("Prob-Vector", None)
@@ -140,7 +144,7 @@ def __obj_file_handler__(cm: "pycm.ConfusionMatrix", file: IO) -> Tuple[List[Any
         loaded_matrix = dict(obj_data["Matrix"])
         for i in loaded_matrix:
             loaded_matrix[i] = dict(loaded_matrix[i])
-        matrix_param = matrix_params_from_table(loaded_matrix)
+        matrix_param = matrix_params_from_table(loaded_matrix, saved_classes)
     cm.digit = obj_data["Digit"]
     cm.imbalance = obj_data.get("Imbalanced", None)
 
