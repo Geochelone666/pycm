@@ -127,6 +127,12 @@ def __obj_file_handler__(cm: "pycm.ConfusionMatrix", file: IO) -> Tuple[List[Any
     if obj_data["Actual-Vector"] is not None and obj_data[
             "Predict-Vector"] is not None:
         loaded_weights = obj_data.get("Sample-Weight", None)
+        loaded_label_map = obj_data.get("Label-Map")
+        if loaded_label_map is not None:
+            cm._loaded_label_map = dict(loaded_label_map)
+            # Vectors remain in the original class space until construction is
+            # complete; relabel the rebuilt object only after its stats exist.
+            saved_classes = list(cm._loaded_label_map)
         # Saved vectors must not bypass constructor length/value validation.
         matrix_param = __obj_vector_handler__(
             cm, obj_data["Actual-Vector"], obj_data["Predict-Vector"],

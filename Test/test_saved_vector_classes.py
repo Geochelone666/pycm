@@ -37,3 +37,41 @@ def test_legacy_vector_only_json_still_loads(tmp_path):
     with name.open() as file:
         actual = ConfusionMatrix(file=file)
     assert actual.table == ConfusionMatrix([0, 1, 1], [0, 1, 0]).table
+
+
+@pytest.mark.parametrize("weights", [None, [2, 5, 3]])
+@pytest.mark.parametrize("twice", [False, True])
+@pytest.mark.parametrize("mixed", [False, True])
+def test_relabelled_vectors_roundtrip_without_mutating_source(tmp_path, weights, twice, mixed):
+    actual_values = [0, "1", "1"] if mixed else [0, 1, 1]
+    predicted_values = [0, "1", 0] if mixed else [0, 1, 0]
+    cm = ConfusionMatrix(actual_values, predicted_values, sample_weight=weights)
+    cm.relabel(dict(zip(cm.classes, ["cat", "dog"])))
+    if twice:
+        cm.relabel({"cat": "a", "dog": "b"})
+    name = str(tmp_path / "relabelled")
+    assert cm.save_obj(name)["Status"]
+    with open(name + ".obj") as file:
+        loaded = ConfusionMatrix(file=file)
+    assert loaded.classes == cm.classes
+    assert loaded.table == cm.table
+    assert loaded.overall_stat == cm.overall_stat
+    assert loaded.class_stat == cm.class_stat
+    assert cm.actual_vector == actual_values
+    assert cm.predict_vector == predicted_values
+    # A second save of the loaded object must remain stable as well.
+    assert loaded.save_obj(name)["Status"]
+    with open(name + ".obj") as file:
+        assert ConfusionMatrix(file=file).table == cm.table
+
+
+def test_relabelled_subset_does_not_reinclude_excluded_observations(tmp_path):
+    cm = ConfusionMatrix([0, 1, 2], [0, 1, 2], classes=[0, 1])
+    cm.relabel({0: 2, 1: 3})
+    name = str(tmp_path / "subset")
+    assert cm.save_obj(name)["Status"]
+    with open(name + ".obj") as file:
+        loaded = ConfusionMatrix(file=file)
+    assert loaded.table == cm.table
+    assert loaded.label_map == cm.label_map
+    assert loaded.actual_vector == cm.actual_vector
