@@ -118,6 +118,9 @@ class ConfusionMatrix():
         self.sparse_normalized_matrix = None
         self.positions = None
         self.label_map = {x: x for x in self.classes}
+        if hasattr(self, "_loaded_label_map"):
+            self.relabel(self._loaded_label_map)
+            del self._loaded_label_map
         self.timings["total"] = sum(self.timings.values())
 
     def print_matrix(self,
@@ -477,6 +480,8 @@ class ConfusionMatrix():
                          "Sample-Weight": weights_vector_temp,
                          "Transpose": self.transpose,
                          "Imbalanced": self.imbalance}
+            if any(old != new for old, new in self.label_map.items()):
+                dump_dict["Label-Map"] = list(self.label_map.items())
             if save_stat:
                 dump_dict["Class-Stat"] = self.class_stat
                 dump_dict["Overall-Stat"] = self.overall_stat
