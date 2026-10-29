@@ -123,10 +123,10 @@ def __obj_file_handler__(cm: "pycm.ConfusionMatrix", file: IO) -> Tuple[List[Any
     if obj_data["Actual-Vector"] is not None and obj_data[
             "Predict-Vector"] is not None:
         loaded_weights = obj_data.get("Sample-Weight", None)
-        matrix_param = matrix_params_calc(obj_data[
-            "Actual-Vector"],
-            obj_data[
-            "Predict-Vector"], loaded_weights)
+        # Saved vectors must not bypass constructor length/value validation.
+        matrix_param = __obj_vector_handler__(
+            cm, obj_data["Actual-Vector"], obj_data["Predict-Vector"],
+            None, loaded_weights, None)
         cm.actual_vector = obj_data["Actual-Vector"]
         cm.predict_vector = obj_data["Predict-Vector"]
         cm.prob_vector = obj_data.get("Prob-Vector", None)
