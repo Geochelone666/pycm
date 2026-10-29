@@ -75,3 +75,15 @@ def test_relabelled_subset_does_not_reinclude_excluded_observations(tmp_path):
     assert loaded.table == cm.table
     assert loaded.label_map == cm.label_map
     assert loaded.actual_vector == cm.actual_vector
+
+
+@pytest.mark.parametrize('sort', [False, True])
+def test_relabelled_display_order_survives_reload(tmp_path, sort):
+    cm = ConfusionMatrix([0, 1, 1], [0, 1, 0])
+    cm.relabel({0: 'z', 1: 'a'}, sort=sort)
+    name = str(tmp_path / 'order')
+    assert cm.save_obj(name)['Status']
+    with open(name + '.obj') as file:
+        loaded = ConfusionMatrix(file=file)
+    assert loaded.classes == cm.classes
+    assert loaded.table == cm.table
